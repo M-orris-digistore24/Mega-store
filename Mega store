@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Morris Digital Store | Earn Online Worldwide</title>
+  <style>
+    :root {
+      --primary: #000;
+      --secondary: #b59410;
+      --accent: #ffd700;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: var(--primary);
+      color: var(--accent);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center; /* Align search and buttons vertically */
+      flex-wrap: wrap;
+      gap: 10px;
+      background: #222;
+      padding: 10px;
+    }
+    /* --- NEW CSS for Search Input --- */
+    #search-input {
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: 1px solid #555;
+      background: #333;
+      color: #fff;
+      min-width: 200px;
+      transition: border-color 0.3s;
+    }
+    #search-input:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+    /* --- END NEW CSS --- */
+    nav button {
+      background: var(--secondary);
+      border: none;
+      color: #000;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    nav button:hover {
+      background: var(--accent);
+    }
+    nav button.active {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); 
+      font-weight: bold;
+    }
+    main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      padding: 2rem;
+    }
+    .product-card {
+      background: #1a1a1a;
+      border-radius: 15px;
+      padding: 1rem;
+      text-align: center;
+      transition: 0.3s;
+      border: 1px solid #333;
+    }
+    .product-card:hover {
+      transform: scale(1.03);
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+    .product-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+      filter: brightness(0.85); 
+      transition: filter 0.3s;
+    }
+    .product-card:hover img {
+        filter: brightness(1);
+    }
+    .product-card h3 {
+      font-size: 1.1rem;
+      margin: 10px 0 5px;
+      color: var(--accent);
+    }
+    .product-card p {
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+    .price {
+      color: var(--secondary);
+      font-weight: 600;
+    }
+    .buy-btn {
+      display: inline-block;
+      margin-top: 10px;
+      background: var(--accent);
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .buy-btn:hover {
+      background: #fff;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #000;
+      color: #aaa;
+      border-top: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Morris Digital Store 💰 <br />
+    <small>Earn Online Worldwide</small>
+  </header>
+
+  <nav>
+    <input type="text" id="search-input" placeholder="Search products..." onkeyup="combinedFilter()" />
+    <button onclick="changeCategory('all')">All</button>
+    <button onclick="changeCategory('fitness')">Fitness</button>
+    <button onclick="changeCategory('crypto')">Crypto</button>
+    <button onclick="changeCategory('business')">Business</button>
+    <button onclick="changeCategory('software')">Software</button>
+  </nav>
+
+  <main id="product-grid"></main>
+
+  <footer>© 2025 Morris Digital Store. All Rights Reserved.</footer>
+
+  <script>
+  const productGrid = document.getElementById("product-grid");
+  const searchInput = document.getElementById("search-input");
+  let currentCategory = 'all'; // State variable to track the active category
+
+  const demoProducts = [
+    {
+      title: "Crypto Mastery Course",
+      description: "Learn cryptocurrency trading from scratch and earn passive income.",
+      category: "crypto",
+      priceText: "$49.99",
+      commissionPct: "50",
+      affiliateLink: "https://www.digistore24.com/redir/12345/Morrismbuvi",
+      image: "https://via.placeholder.com/300x180?text=Crypto+Course"
+    },
+    {
+      title: "Fitness Transformation Program",
+      description: "12-week online fitness coaching to get you in the best shape.",
+      category: "fitness",
+      priceText: "$39.00",
+      commissionPct: "60",
+      affiliateLink: "https://www.digistore24.com/redir/23456/Morrismbuvi",
+      image: "https://via.placeholder.com/300x180?text=Fitness+Program"
+    },
+    {
+      title: "Affiliate Marketing Blueprint",
+      description: "Step-by-step training to build your online business fast.",
+      category: "business",
+      priceText: "$59.00",
+      commissionPct: "75",
+      affiliateLink: "https://www.digistore24.com/redir/34567/Morrismbuvi",
+      image: "https://via.placeholder.com/300x180?text=Affiliate+Blueprint"
+    },
+    {
+      title: "AI Business Automation Tool",
+      description: "Use AI to automate your marketing and increase sales.",
+      category: "software",
+      priceText: "$79.00",
+      commissionPct: "40",
+      affiliateLink: "https://www.digistore24.com/redir/45678/Morrismbuvi",
+      image: "https://via.placeholder.com/300x180?text=AI+Software"
+    }
+  ];
+
+  function loadProducts() {
+    productGrid.innerHTML = demoProducts.map(p => `
+      <div class="product-card" data-category="${p.category}" data-title="${p.title.toLowerCase()}" data-description="${p.description.toLowerCase()}">
+        <img src="${p.image}" alt="${p.title}">
+        <h3>${p.title}</h3>
+        <p>${p.description}</p>
+        <p class="price">${p.priceText} | ${p.commissionPct}% Commission</p>
+        <a href="${p.affiliateLink}" target="_blank" class="buy-btn">View Offer</a>
+      </div>
+    `).join("");
+  }
+  
+  // New function to handle category change and trigger combined filter
+  function changeCategory(cat) {
+      currentCategory = cat; // Update the state
+      
+      // Update the active state for buttons
+      const navButtons = document.querySelectorAll("nav button");
+      navButtons.forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.innerText.toLowerCase() === cat || (cat === 'all' && btn.innerText.toLowerCase() === 'all')) {
+              btn.classList.add('active');
+          }
+      });
+      
+      combinedFilter(); // Re-run the filter with the new category
+  }
+
+  // New function to handle both search and category filtering
+  function combinedFilter() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const cards = document.querySelectorAll(".product-card");
+
+    cards.forEach(card => {
+        const cardCategory = card.dataset.category;
+        const cardTitle = card.dataset.title;
+        const cardDescription = card.dataset.description;
+
+        // 1. Category Check
+        const categoryMatch = currentCategory === 'all' || cardCategory === currentCategory;
+
+        // 2. Search Check (Check title OR description)
+        const searchMatch = cardTitle.includes(searchTerm) || cardDescription.includes(searchTerm);
+
+        // Display the card only if BOTH checks pass
+        card.style.display = categoryMatch && searchMatch ? "block" : "none";
+    });
+  }
+
+  loadProducts();
+  changeCategory('all'); // Set 'All' button as active and run initial filter
+  </script>
+</body>
+</html>
