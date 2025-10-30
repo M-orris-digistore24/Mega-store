@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Morris Digital Store</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(90deg, gold, black);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: white;
+    }
+    nav {
+      text-align: center;
+      margin: 1rem 0;
+    }
+    nav button {
+      background: gold;
+      border: none;
+      margin: 0.2rem;
+      padding: 0.6rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      color: black;
+      transition: 0.3s;
+    }
+    nav button.active, nav button:hover {
+      background: white;
+      color: black;
+    }
+    #search-container {
+      text-align: center;
+      margin: 1.5rem;
+    }
+    #search-input {
+      width: 80%;
+      max-width: 400px;
+      padding: 0.6rem;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+    #product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .product-card {
+      background: #111;
+      border: 2px solid gold;
+      border-radius: 15px;
+      text-align: center;
+      padding: 1rem;
+      transition: transform 0.3s;
+    }
+    .product-card:hover {
+      transform: scale(1.05);
+    }
+    .product-card img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    .product-card h3 {
+      color: gold;
+      margin-top: 0.6rem;
+    }
+    .price {
+      font-weight: 600;
+      color: #eee;
+      margin: 0.5rem 0;
+    }
+    .buy-btn {
+      display: inline-block;
+      background: gold;
+      color: black;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      border-radius: 20px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .buy-btn:hover {
+      background: white;
+    }
+    footer {
+      text-align: center;
+      background: #111;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>Morris Digital Store</header>
+  <nav>
+    <button onclick="changeCategory('all')" class="active">All</button>
+    <button onclick="changeCategory('crypto')">Crypto</button>
+    <button onclick="changeCategory('fitness')">Fitness</button>
+    <button onclick="changeCategory('finance')">Finance</button>
+    <button onclick="changeCategory('software')">Software</button>
+  </nav>
+  <div id="search-container">
+    <input id="search-input" type="text" placeholder="Search for products..." oninput="combinedFilter()" />
+  </div>
+
+  <div id="product-grid">Loading products...</div>
+
+  <footer>© 2025 Morris Digital Store | Powered by Digistore24</footer>
+
+  <script>
+    const SHEET_URL = "https://opensheet.elk.sh/YOUR_SHEET_ID"; // 🔹 Replace with your Google Sheet ID
+    const productGrid = document.getElementById("product-grid");
+    const searchInput = document.getElementById("search-input");
+    let currentCategory = 'all';
+    let products = [];
+
+    async function loadProducts() {
+      try {
+        const res = await fetch(SHEET_URL);
+        products = await res.json();
+        displayProducts(products);
+      } catch (err) {
+        console.error("Failed to load products:", err);
+        productGrid.innerHTML = "<p style='color:red'>Error loading products. Please check your Sheet link.</p>";
+      }
+    }
+
+    function displayProducts(list) {
+      productGrid.innerHTML = list.map(p => `
+        <div class="product-card" 
+          data-category="${p.category?.toLowerCase()}" 
+          data-title="${p.title?.toLowerCase()}" 
+          data-description="${p.description?.toLowerCase()}">
+          <img src="${p.image}" alt="${p.title}">
+          <h3>${p.title}</h3>
+          <p>${p.description}</p>
+          <p class="price">${p.priceText} | ${p.commissionPct}% Commission</p>
+          <a href="${p.affiliateLink}" target="_blank" class="buy-btn">View Offer</a>
+        </div>
+      `).join("");
+      combinedFilter();
+    }
+
+    function changeCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll("nav button").forEach(btn => {
+        btn.classList.toggle("active", btn.innerText.toLowerCase() === cat);
+      });
+      combinedFilter();
+    }
+
+    function combinedFilter() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const cards = document.querySelectorAll(".product-card");
+      cards.forEach(card => {
+        const categoryMatch = currentCategory === 'all' || card.dataset.category === currentCategory;
+        const searchMatch = card.dataset.title.includes(searchTerm) || card.dataset.description.includes(searchTerm);
+        card.style.display = categoryMatch && searchMatch ? "block" : "none";
+      });
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>
